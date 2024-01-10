@@ -160,14 +160,38 @@ function loadMapScenario() {
 
                             }
                             else {
-                                $("<td>").appendTo(tr).text(vect[z]).attr('contenteditable', 'true');
+                                if (item == "AnnoNylon" || item == "AnnoGomme" || item == "NumPiante") {
+                                    //controllo per abilitare l'inserimento di solo numeri all'interno di determinate  celle
+                                    $("<td>").appendTo(tr).text(vect[z]).attr('contenteditable', 'true').on('input', function () {
+                                        let inputValue = $(this).text();
+                                        if (!isNaN(inputValue)) {
+                                           
+                                        } else {
+                                            
+                                            $(this).text('0');  
+                                      
+                                        }
+                                    });
+                                }
+                                else {
+                                    $("<td>").appendTo(tr).text(vect[z]).attr('contenteditable', 'true').on('blur', function () {
+                                        let inputValue = $(this).text();  
+                                        //questo per abilitare solo l'inserimento di false o di true 
+                                       if (inputValue == "true" || inputValue=="false") {
+                                            
+                                        } else {
+                                           $(this).text('false');  
+                                      
+                                        }
+                                    });
+                                }
+                              
+                              
                             }
-                           
-                            console.log(vect[z])
-                            console.log(item)
-                            z++
+                           z++
                             $("#tableSerra").append(tr);
                         }
+                        
                         $("#modelZona").hide();
                         $("#modelSerra").show();
 
@@ -181,17 +205,22 @@ function loadMapScenario() {
     })
    
     $("#btnClose").on("click", function () {
-        $("#modelSerra").hide();
-        $("#modelZona").hide();
-        let chiave=[];
-        let valore=[];
+        $("#messaggioModifica").show();
+    })
+    //salvare le modifiche apportate alla serra 
+    $("#btnSalvaModificheSerra").on("click", function () {
+      
+        let chiave = [];
+        let valore = [];
         let i = 0;
+        //prendere tutti i valori della tabella, li carico poi all'interno di un vettore
         $('#tableSerra tr').each(function () {
-            chiave[i] = $(this).find('td:eq(0)').text(); 
-            valore[i] = $(this).find('th:eq(0)').text(); 
+            chiave[i] = $(this).find('td:eq(0)').text();
+            valore[i] = $(this).find('th:eq(0)').text();
             i++;
-            
+
         });
+
         let postData = "{idSerra: '" + chiave[0] + "', numPiante: '" + chiave[1] + "', disinfettata: '" + chiave[2] + "', verduraPresentePrima: '" + chiave[3] + "', kgTotaliRaccolti: '" + chiave[4] + "', idZona: '" + chiave[5] + "', annoNylon: '" + chiave[6] + "', annoGomme: '" + chiave[7] + "'}";
         let getID11 = sendRequestNoCallback("api/serra/update", "POST", postData);
         console.log(postData)
@@ -203,14 +232,21 @@ function loadMapScenario() {
             })
         })
         getID11.done(function (serverData) {
-            
+
             console.log(serverData)
 
         })
-        console.log(chiave)
-        console.log(valore)
-        //$("#messaggioModifica").show();
+        $("#modelSerra").hide();
+        $("#modelZona").hide();
+        $("#messaggioModifica").hide();
     })
+    $("#btnNonSalvaModificheSerra").on("click", function () {
+        $("#modelSerra").hide();
+        $("#modelZona").hide();
+        $("#messaggioModifica").hide();
+    })
+
+    
     $("#btnCloseZona").on("click", function () {
         $("#modelZona").hide();
     })

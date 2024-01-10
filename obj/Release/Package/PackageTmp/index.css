@@ -1,0 +1,79 @@
+﻿#myMap {
+    position: relative;
+    height:87.5vh;
+    z-index: 1;
+}
+
+.nuova{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding-top:10px;
+    font-size:15pt;
+}
+#ui-datepicker-div {
+    background-color: black;
+    color:white;
+}
+#tableZona {
+    width: 100%;
+}
+#tableSerra {
+    width: 100%;
+}
+table, th, td {
+    border: 1px solid black;
+   
+    padding: 10px
+}
+
+#myModalLabel{
+    width:100%;
+    margin:0 auto;
+}
+
+#btnClose {
+    width: 100%;
+}
+
+.datepicker {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    z-index: 9999;
+    font-size: 14px;
+}
+
+    .datepicker li {
+        list-style: none;
+        display: inline-block;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .datepicker li:hover {
+            background-color: #f1f1f1;
+        }
+
+.datepicker {
+    position: absolute;
+    z-index: 9999;
+}
+
+.modal {
+    position: fixed;
+    /* aggiungi qui le regole CSS per la posizione e le dimensioni del modal */
+}
+
+    .modal .datepicker {
+        left: auto !important;
+        right: 0;
+        top: calc(100% + 10px);
+    }
+
+
+
+
+
+

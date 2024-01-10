@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>PROGETTO MATURITA'</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="libreria.js"></script>
+    <script src="login.js"></script>
+    <link href="login.css" rel="stylesheet" />
+</head>
+<body>
+    <img class="wave" src="../img/wave.png">
+    <div class="container">
+        <div class="img">
+            <img src="../img/bg.svg">
+        </div>
+        <div class="login-content">
+            <div id="form">
+                <img src="../img/avatar.svg">
+                <h2 id="title">Benvenuto</h2>
+                <div class="input-div one">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <input type="text" class="input" id="txtUsernameRecupero" placeholder="Inserisci Username">
+                    </div>
+                </div>
+                <div class="input-div one" id="divEmailRecupero">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <input type="text" class="input" id="txtEmailRecupero" placeholder="Inserisci email">
+                    </div>
+                </div>
+                <div class="input-div pass" id="divPasswordLg">
+                    <div class="i">
+                        <i class="fas fa-lock" id="lock3"></i> <i class="fas fa-unlock" id="unlock3"></i>
+                    </div>
+                    <div class="div">
+                        <input type="password" class="input" id="txtPasswordLg" placeholder="Password">
+                    </div>
+                </div>
+                <label class="form-label" id="lErr"> </label>
+                <a id="pwdDimenticata">Password Dimenticata?</a>
+                <a id="userDimenticata">Username Dimenticato?</a>
+                <a id="pwdDimenticataInvio">Invia Richiesta</a>
+                <a id="userDimenticataInvio">Invia Richiesta</a>
+                <input type="submit" class="btn" value="Login" id="btnLogin">
+                <a href="register.html">Non hai ancora un profilo? Crealo</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

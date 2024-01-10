@@ -1,0 +1,35 @@
+﻿body {
+}
+th, td {
+    border: 1px solid grey;
+}
+#btnProduzione {
+   
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: blue;
+}
+
+#btnDeleteProduzione {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: red;
+}
+
+#btnModificaProduzione {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: blue;
+    
+}

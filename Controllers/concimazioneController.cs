@@ -12,16 +12,13 @@ namespace esercizioProva.Controllers
 {
     public class concimazioneController : ApiController
     {
-        // GET api/<controller>
         private SqlConnection _cn;
         private SqlCommand _cmd;
         private SqlDataReader _dr;
         private concimazioneModel concimazione;
         private List<concimazioneModel> _lstConcimazione;
         private string _connectionString = System.Configuration.ConfigurationManager.AppSettings["connection"];
-        // GET api/<controller>
         [HttpGet]
-
         public IEnumerable<concimazioneModel> getAllConcimazioni()
         {
             _cn = new SqlConnection(_connectionString);
@@ -38,13 +35,9 @@ namespace esercizioProva.Controllers
                 concimazione = new concimazioneModel();
                 concimazione.IdConcimazione = Convert.ToInt32(_dr["idConcimazione"]);
                 concimazione.Data = Convert.ToDateTime(_dr["data"]);
-               
-           
                 concimazione.IdZona = Convert.ToInt32(_dr["idZona"]);
-
                 _lstConcimazione.Add(concimazione);
             }
-
             _cmd.Dispose();
             _cn.Close();
             _cn.Dispose();
@@ -68,12 +61,9 @@ namespace esercizioProva.Controllers
                 concimazione = new concimazioneModel();
                 concimazione.IdConcimazione = Convert.ToInt32(_dr["idConcimazione"]);
                 concimazione.Data = Convert.ToDateTime(_dr["data"]);
-               
-               
                 concimazione.IdZona = Convert.ToInt32(_dr["idZona"]);
                 _lstConcimazione.Add(concimazione);
             }
-
             return _lstConcimazione;
         }
         [HttpPost]

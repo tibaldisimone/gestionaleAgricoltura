@@ -3,13 +3,13 @@
     $("#modelZona").hide();
     $("#messaggioModifica").hide();
 })
+//funzione richiamata da questa riga nell'html:    <script type="text/javascript" src="http://www.bing.com/api/maps/mapcontrol?callback=loadMapScenario" async defer></script>
 function loadMapScenario() {
     $("#btnCloseMod").on("click", function () {
         $("#modelAggiungiLavoro").hide()
         $("#caselle").html(" ")
         $("#insertButton").hide()
-        location.reload();
-      
+        location.reload();//ricarica la pagina quando aggiungo una modifica
     })
     $("#btnMenu").on("click", function () {
         $("#modelSerra").hide();
@@ -25,9 +25,9 @@ function loadMapScenario() {
         $("#modelZona").hide();
     })
     $("#logOut").on("click", function () {
-
         window.location.href = "login.html"
     })
+    //creazione mappa
     var map = new Microsoft.Maps.Map('#myMap',
         {
             credentials: 'Am0G-qgPdkuzxoY51ifQZR6pqUESorI8kMRnSVMOB04AVoIZfq1D6HgQT1xrOlYp',
@@ -55,6 +55,7 @@ function loadMapScenario() {
             width: windowWidth - 80
         });
     }
+    //prende le coordinate delle zone per creare le zone sulla mappa
     let logIn = sendRequestNoCallback("api/coordinateZone/getAllCoordinate/", "GET", {});
     logIn.fail(function (jqXHR) {
         errore(jqXHR);
@@ -62,6 +63,7 @@ function loadMapScenario() {
     })
     logIn.done(function (serverData) {
         for (let item of serverData) {
+            //crezione dei rettangoli
             var rectCoords = [
                 new Microsoft.Maps.Location(item.Lat1, item.Long1),
                 new Microsoft.Maps.Location(item.Lat4, item.Long4),
@@ -69,7 +71,8 @@ function loadMapScenario() {
                 new Microsoft.Maps.Location(item.Lat6, item.Long6),
                 new Microsoft.Maps.Location(item.Lat3, item.Long3),
                 new Microsoft.Maps.Location(item.Lat2, item.Long2),
-               ];
+            ];
+            //grafica dei rettangoli
             var rect = new Microsoft.Maps.Polygon(rectCoords, {
                 id: item.IdCoordinate,
                 strokeColor: 'lime',
@@ -77,19 +80,18 @@ function loadMapScenario() {
                 
             });
             rect.metadata = { id: item.IdCoordinate };
+            //gestire il click della zona, quando cliccata mi apre il modal per gestire la zona
             Microsoft.Maps.Events.addHandler(rect, 'click', function (r) {
-     
-            
-          
                 let postData = "{idZona: '" + r.target.metadata.id + "'}";
+                //richiama la funzione dal controller
                 let logIn = sendRequestNoCallback("api/zona/getZona/", "POST", postData);
                 logIn.fail(function (jqXHR) {
                     errore(jqXHR);
                 })
                 logIn.done(function (serverData) {
+                    //crea e formatta: titolo e la tabella contenente i dati della zona
                     let intest = Object.keys(serverData[0]);
                     let vect = Object.values(serverData[0])
-                 
                     $("#tableZona").html(" ");
                     $("#zona").children("div").eq(0).append($("#tableZona"));
                     $("#title").html("ZONA N°:" + vect[0]);
@@ -103,17 +105,15 @@ function loadMapScenario() {
                     }
                     $("#modelBody").children().eq(1).attr('id', vect[0]);
                     $("#modelBody").children().eq(2).attr('id', vect[0]);
-                  
                     $("#modelSerra").hide();
                     $("#modelZona").show();
+                  
                 })
             });
-      
-            rect.setOptions({ zIndex: 1 });
-            map.entities.push(rect);
+            rect.setOptions({ zIndex: 1 });//permette di inserire il rettangolo sopra alla mappa altrimenti non si vedrebbe
+            map.entities.push(rect);//carica il rettangolo sulla mappa
         }
-
-
+        //fa lo stesso della zona ma qua è per le serre
         let coord = sendRequestNoCallback("api/coordinate/getAllCoordinate/", "GET", {});
         coord.fail(function (jqXHR) {
             errore(jqXHR);
@@ -135,10 +135,8 @@ function loadMapScenario() {
                     pinPosition: new Microsoft.Maps.Point(0, -20)
                 });
                 rect.metadata = { id: item.IdCoordinate };
+                //creazione modal serra dopo click, per mostrare informazioni
                 Microsoft.Maps.Events.addHandler(rect, 'click', function (r) {
-                    
-                    
-                    
                     let postData = "{idSerra: '" + r.target.metadata.id + "'}";
                     let logIn = sendRequestNoCallback("api/serra/getSerra/", "POST", postData);
                     logIn.fail(function (jqXHR) {
@@ -146,8 +144,7 @@ function loadMapScenario() {
                     })
                     logIn.done(function (serverData) {
                         let intest = Object.keys(serverData[0]);
-                        let vect = Object.values(serverData[0])
-                       
+                        let vect = Object.values(serverData[0]);
                         $("#tableSerra").html(" ");
                         $("#serra").children("div").eq(0).append($("#tableSerra"));
                         $("#myModalLabel").html("SERRA N°:" + vect[0]);
@@ -155,6 +152,7 @@ function loadMapScenario() {
                         for (let item of intest) {
                             let tr = $("<tr>");
                             $("<th>").html(item).appendTo(tr);
+                            //bloccare la modifica da parte dell'utente
                             if (item == "IdSerra" || item == "KgTotaliRaccolti" || item == "IdZona") {
                                 $("<td>").appendTo(tr).text(vect[z]);
 
@@ -167,10 +165,8 @@ function loadMapScenario() {
                                         if (!isNaN(inputValue)) {
                                            
                                         } else {
-                                            
                                             $(this).text('0');  
-                                      
-                                        }
+                                         }
                                     });
                                 }
                                 else {
@@ -185,31 +181,24 @@ function loadMapScenario() {
                                         }
                                     });
                                 }
-                              
-                              
                             }
                            z++
                             $("#tableSerra").append(tr);
                         }
-                        
                         $("#modelZona").hide();
                         $("#modelSerra").show();
-
                     })
                 });
-              
                 rect.setOptions({ zIndex: 999 });
                 map.entities.push(rect);
             }
         });
     })
-   
-    $("#btnClose").on("click", function () {
+     $("#btnClose").on("click", function () {
         $("#messaggioModifica").show();
     })
     //salvare le modifiche apportate alla serra 
     $("#btnSalvaModificheSerra").on("click", function () {
-      
         let chiave = [];
         let valore = [];
         let i = 0;
@@ -220,10 +209,9 @@ function loadMapScenario() {
             i++;
 
         });
-
+        //aggiornamento dati della serra
         let postData = "{idSerra: '" + chiave[0] + "', numPiante: '" + chiave[1] + "', disinfettata: '" + chiave[2] + "', verduraPresentePrima: '" + chiave[3] + "', kgTotaliRaccolti: '" + chiave[4] + "', idZona: '" + chiave[5] + "', annoNylon: '" + chiave[6] + "', annoGomme: '" + chiave[7] + "'}";
         let getID11 = sendRequestNoCallback("api/serra/update", "POST", postData);
-        console.log(postData)
         getID11.fail(function (jqXHR) {
             errore(jqXHR);
             console.log(serverData);
@@ -232,9 +220,7 @@ function loadMapScenario() {
             })
         })
         getID11.done(function (serverData) {
-
             console.log(serverData)
-
         })
         $("#modelSerra").hide();
         $("#modelZona").hide();
@@ -245,30 +231,30 @@ function loadMapScenario() {
         $("#modelZona").hide();
         $("#messaggioModifica").hide();
     })
-
-    
     $("#btnCloseZona").on("click", function () {
         $("#modelZona").hide();
     })
     $("#modelBody").children().eq(1).on("click", function () {
         window.location.href = "visualizzazioneAttivita.html?parametro=" + $("#modelBody").children().eq(1).attr('id'); +""
+       //ogni paragrafo ha un id($("#modelBody").children().eq(1).attr('id')) quando premo il bottone, lui mi prende l'id della zona, e lo passa 
+        //all'url per richiamare la pagina visualizzazioneAttivita
     })
+    //stessa cosa di prima ma qua lo facciamo per aggiungere un nuovo lavoro fatto su quella zona
     $("#modelBody").children().eq(2).on("click", function () {
-        
         $("#modelZona").hide();
         $("#modelAggiungiLavoro").show();
-       
         $("#comboLavoro").prop("selectedIndex",-1)
         $("#comboLavoro").on("change", function () {
-
             $("#caselle").html(" ");
-           
+            //richiamo la funzione, ma il controller ha il nome che inizia con la lettera minuscola, invece la funzione presente nel controller inizia con la lettera 
+            //maiuscola
             let dati = sendRequestNoCallback("api/" + $(this).find("option:selected").text() + "/getAll" + $("#comboLavoro").val() + "/", "GET", {});
             let selezionato = $(this).find("option:selected").text()
             dati.fail(function (jqXHR) {
                 errore(jqXHR);
                 console.log(serverData);
             })
+            //qua inizio a comporre il form modal con gli elementi per l'inserimento
             dati.done(function (serverData) {
                 let intest = Object.keys(serverData[0]);
                 let k = 0;
@@ -280,7 +266,6 @@ function loadMapScenario() {
                     });
                     if (item.toString() == "Data") {
                         var datePickerId = "datepicker" + ($("input[type='text'][id^='datepicker']").length + 1);
-                   
                         $("<input>").attr("type", "text").attr("id", item).attr("name", datePickerId).appendTo("body");
                         $("#" + item).datepicker().css({
                             "width": "100%",
@@ -583,9 +568,6 @@ function loadMapScenario() {
                             break;
 
                         case 'IdConcimazione':
-                            
-                    
-                          
                             var selectedTexts = $('#concimeUtilizzato option:selected').map(function () {
                                 return $(this).text();
                             }).get();

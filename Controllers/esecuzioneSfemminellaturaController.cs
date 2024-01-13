@@ -43,7 +43,7 @@ namespace esercizioProva.Controllers
 
             return _lstEsecuzioneSfemminellatura;
         }
-
+        [HttpPost]
         public string insert([FromBody] dynamic data)
         {
             try

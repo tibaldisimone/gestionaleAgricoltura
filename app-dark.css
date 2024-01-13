@@ -60,14 +60,39 @@
     padding: 30px 30px 70px;
 }
 
-#conferma{
-   color:black;
-    font-weight:bold;
+
+#btnCloseMod {
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    padding-right: 90px
+}
+#btnCloseAggLavoro {
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    padding-right: 90px
+}
+#btnNonConfermaInserimento {
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    padding-right: 90px
+}
+#btnConfermaModifiche {
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    padding-right: 90px
+}
+#conferma {
+    color: black;
+    font-weight: bold;
 }
 #title {
     font-weight: bold;
     color: black;
-    padding-left:45px
+   
 }
 
 #myModalLabel {
@@ -81,6 +106,14 @@
     text-align: center;
     padding-right: 90px
 }
+.btnAggLavoro {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 15pt;
+}
+
 
 #btnClose {
     font-weight: bold;
@@ -4301,10 +4334,11 @@ a.close.disabled {
 
 .modal-header {
   text-align:center;
-  display: flex;
-  align-items: flex-start;
+  padding-bottom:1rem;
+  font-weight:bold;
+  color:black;
   justify-content: space-between;
-  padding: 1rem 1rem;
+ 
   border-bottom: 1px solid #212529;
   border-top-left-radius: calc(0.3rem - 1px);
   border-top-right-radius: calc(0.3rem - 1px); }
@@ -8158,7 +8192,7 @@ select {
 
 .h1, .h2, .h3, .h4, .h5, .h6,
 h1, h2, h3, h4, h5, h6, strong {
-  color: #dee2e6; }
+  color: black; }
 
 .text-muted {
   color: #adb5bd !important; }

@@ -2,6 +2,7 @@
     $("#modelSerra").hide();
     $("#modelZona").hide();
     $("#messaggioModifica").hide();
+    $("#modelFormDatiLavoro").hide();
 })
 //funzione richiamata da questa riga nell'html:    <script type="text/javascript" src="http://www.bing.com/api/maps/mapcontrol?callback=loadMapScenario" async defer></script>
 function loadMapScenario() {
@@ -196,6 +197,12 @@ function loadMapScenario() {
     })
      $("#btnClose").on("click", function () {
         $("#messaggioModifica").show();
+     })
+    $("btnNonConfermaInserimento").on("click", function () {
+        $("#messaggioInserimentoSbagliato").hide();
+    })
+    $("btnConfermaModifiche").on("click", function () {
+        location.reload();
     })
     //salvare le modifiche apportate alla serra 
     $("#btnSalvaModificheSerra").on("click", function () {
@@ -234,6 +241,10 @@ function loadMapScenario() {
     $("#btnCloseZona").on("click", function () {
         $("#modelZona").hide();
     })
+    $("#btnCloseAggLavoro").on("click", function () {
+        $("#modelFormDatiLavoro").hide();
+        location.reload();
+    })
     $("#modelBody").children().eq(1).on("click", function () {
         window.location.href = "visualizzazioneAttivita.html?parametro=" + $("#modelBody").children().eq(1).attr('id'); +""
        //ogni paragrafo ha un id($("#modelBody").children().eq(1).attr('id')) quando premo il bottone, lui mi prende l'id della zona, e lo passa 
@@ -243,186 +254,162 @@ function loadMapScenario() {
     $("#modelBody").children().eq(2).on("click", function () {
         $("#modelZona").hide();
         $("#modelAggiungiLavoro").show();
-        $("#comboLavoro").prop("selectedIndex",-1)
-        $("#comboLavoro").on("change", function () {
+      
+       
             $("#caselle").html(" ");
-            //richiamo la funzione, ma il controller ha il nome che inizia con la lettera minuscola, invece la funzione presente nel controller inizia con la lettera 
+            //richiamo la funzione, ma il controller ha il nome che inizia con la lettera minuscola, invece la funzione presente nel controller inizia con la lettera
             //maiuscola
-            let dati = sendRequestNoCallback("api/" + $(this).find("option:selected").text() + "/getAll" + $("#comboLavoro").val() + "/", "GET", {});
-            let selezionato = $(this).find("option:selected").text()
-            dati.fail(function (jqXHR) {
-                errore(jqXHR);
-                console.log(serverData);
-            })
-            //qua inizio a comporre il form modal con gli elementi per l'inserimento
-            dati.done(function (serverData) {
-                let intest = Object.keys(serverData[0]);
-                let k = 0;
-                for (let item of intest) {
-                    var label = $('<label>').text(item + ": ").css({
-                        "display": "block",
-                        "margin-bottom": "5px",
-                    
-                    });
-                    if (item.toString() == "Data") {
-                        var datePickerId = "datepicker" + ($("input[type='text'][id^='datepicker']").length + 1);
-                        $("<input>").attr("type", "text").attr("id", item).attr("name", datePickerId).appendTo("body");
-                        $("#" + item).datepicker().css({
-                            "width": "100%",
-                            "box-sizing": "border-box",
-                            "padding": "10px",
-                            "border": "1px solid #ccc",
-                            "border-radius": "4px",
-                            "margin-bottom": "10px"
-                        });;
-                        $("#" + item).datepicker({
-                            appendTo: ".datepicker-container",
-                            position: { my: "right top", at: "right top", of: $("#" + datePickerId) }
-                        }).val(new Date().toISOString().split('T')[0]);
-                        var div = $('<div>').append(label, $("#" + item));
-                        $('#caselle').append(div);
-                    }
-                    else {
-                        if (item == "IdRaccoltaFinale") {
-                          
-                            let getId = sendRequestNoCallback("api/" + "raccoltaFinale" + "/getRaccoltaFinaliNonConcluse", "POST");
-                            getId.fail(function (jqXHR) {
-                                console.log(jqXHR.status)
-                            })
-                            getId.done(function (serverData) {
-                                
-                                var comboBox = $('<select></select>').css({
-                                    "width": "100%",
-                                    "box-sizing": "border-box",
-                                    "padding": "10px",
-                                    "border": "1px solid #ccc",
-                                    "border-radius": "4px",
-                                    "margin-bottom": "10px"
-                                });
-                                comboBox.attr('id', "raccoltaFinale");
-                                serverData.forEach(function (item) {
-                                 
-                                        comboBox.append($('<option></option>').attr('value', item.IdRaccoltaFinale).text(item.IdRaccoltaFinale+" "+item.Data.slice(0, -9)));
-                                })
-                                var div = $('<div>').append(label, comboBox);
-                                $('#caselle').append(div);
-                               
-                            })
-                        }
-                        else {
-                            if (item == "Nome") {
-
-                            }
-                            else {
-                                var input = $('<input>').attr({
-                                    type: 'text',
-                                    name: 'field' + item
-                                }).css({
-                                    "width": "100%",
-                                    "box-sizing": "border-box",
-                                    "padding": "10px",
-                                    "border": "1px solid #ccc",
-                                    "border-radius": "4px",
-                                    "margin-bottom": "10px"
-                                });
-                                input.attr("id", item)
-
-                                if (k == 0) {
-
-                                    let getId = sendRequestNoCallback("api/" + selezionato + "/getLastId", "POST");
-                                    getId.fail(function (jqXHR) {
-                                        console.log(jqXHR.status)
-                                    })
-                                    getId.done(function (serverData) {
-                                        $("#caselle :input:first").val(serverData + 1).prop('disabled', true);
-
-                                    })
-                                    var div = $('<div>').append(label, input);
-                                    $('#caselle').append(div);
-                                }
-                                else {
-                                    if (item == "IdZona") {
-
-                                        input.val($("#modelBody").children().eq(2).attr("id"))
-                                        var div = $('<div>').append(label, input);
-                                        $('#caselle').append(div);
-                                    }
-                                    else {
-
-                                        if (item == "Varieta") {
-                                            var comboBox = $('<select></select>').css({
-                                                "width": "100%",
-                                                "box-sizing": "border-box",
-                                                "padding": "10px",
-                                                "border": "1px solid #ccc",
-                                                "border-radius": "4px",
-                                                "margin-bottom": "10px"
-                                            });
-                                            comboBox.attr('id', item);
-                                            comboBox.append('<option value="elemento1">Araldino</option>');
-                                            comboBox.append('<option value="elemento2">Gigowak</option>');
-                                            var div = $('<div>').append(label, comboBox);
-                                            $('#caselle').append(div);
-
-                                        }
-                                        else {
-                                            var div = $('<div>').append(label, input);
-                                            $('#caselle').append(div);
-
-                                        }
-                                    }
-                                }
-                            }
-                            
-                           
-                        }
-                    }
-                    k++;
+        $('.btnAggLavoro').each(function () {
+            $(this).on('click', function () {
+                let dati
+                if ($(this).text() != "LANCIO INSETTI ") {
+                     dati = sendRequestNoCallback("api/" + $(this).text().toLowerCase().trim() + "/getAll" + $(this).attr('id') + "/", "GET", {});
                 }
-
-                if (selezionato == "sfemminellatura" || selezionato == "raccolta") {
-                    let getId = sendRequestNoCallback("api/" + "operai" + "/getAllOperai", "GET");
-                    getId.fail(function (jqXHR) {
-                        console.log(jqXHR.status)
-                    })
-                    getId.done(function (serverData) {
-                        console.log(serverData)
-                        let intest = Object.keys(serverData[0]);
-
-                        var label = $('<label>').text(intest[2] +"operario" + ": ").css({
+                else {
+                   
+                    let parola = $(this).text().trim().replace(/\s+/g, '');
+                    console.log(parola)
+                    let text = parola.substring(0, 6).toLowerCase() + parola[6] + parola.substring(7).toLowerCase();
+                    console.log(text)
+                    
+                    dati = sendRequestNoCallback("api/" +text+ "/getAll" + $(this).attr('id') + "/", "GET", {});
+                }
+              
+                $("#modelFormDatiLavoro").show()
+                let selezionato = $(this).text().toLowerCase().trim()
+                dati.fail(function (jqXHR) {
+                    errore(jqXHR);
+                    console.log(serverData);
+                })
+                //qua inizio a comporre il form modal con gli elementi per l'inserimento
+                dati.done(function (serverData) {
+                    let intest = Object.keys(serverData[0]);
+                    let k = 0;
+                    for (let item of intest) {
+                        var label = $('<label>').text(item + ": ").css({
                             "display": "block",
                             "margin-bottom": "5px",
 
                         });
-                        var comboBox = $('<select></select>', {multiple: true }).css({
-                            "width": "100%",
-                            "box-sizing": "border-box",
-                            "padding": "10px",
-                            "border": "1px solid #ccc",
-                            "border-radius": "4px",
-                            "margin-bottom": "10px"
-                        });
-                        comboBox.attr('id', "operaio");
-                        serverData.forEach(function (item) {
-                            console.log(item)
-                            comboBox.append($('<option></option>').attr('value', item.IdOperaio).text(item.Nome));
+                        if (item.toString() == "Data") {
+                            var datePickerId = "datepicker" + ($("input[type='text'][id^='datepicker']").length + 1);
+                            $("<input>").attr("type", "text").attr("id", item).attr("name", datePickerId).appendTo("body");
+                            $("#" + item).datepicker().css({
+                                "width": "100%",
+                                "box-sizing": "border-box",
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "border-radius": "4px",
+                                "margin-bottom": "10px"
+                            });;
+                            $("#" + item).datepicker({
+                                appendTo: ".datepicker-container",
+                                position: { my: "right top", at: "right top", of: $("#" + datePickerId) }
+                            }).val(new Date().toISOString().split('T')[0]);
+                            var div = $('<div>').append(label, $("#" + item));
+                            $('#caselle').append(div);
+                        }
+                        else {
+                            if (item == "IdRaccoltaFinale") {
 
-                          
+                                let getId = sendRequestNoCallback("api/" + "raccoltaFinale" + "/getRaccoltaFinaliNonConcluse", "POST");
+                                getId.fail(function (jqXHR) {
+                                    console.log(jqXHR.status)
+                                })
+                                getId.done(function (serverData) {
+
+                                    var comboBox = $('<select></select>').css({
+                                        "width": "100%",
+                                        "box-sizing": "border-box",
+                                        "padding": "10px",
+                                        "border": "1px solid #ccc",
+                                        "border-radius": "4px",
+                                        "margin-bottom": "10px"
+                                    });
+                                    comboBox.attr('id', "raccoltaFinale");
+                                    serverData.forEach(function (item) {
+
+                                        comboBox.append($('<option></option>').attr('value', item.IdRaccoltaFinale).text(item.IdRaccoltaFinale + " " + item.Data.slice(0, -9)));
+                                    })
+                                    var div = $('<div>').append(label, comboBox);
+                                    $('#caselle').append(div);
+
+                                })
+                            }
+                            else {
+                                if (item == "Nome") {
+
+                                }
+                                else {
+                                    var input = $('<input>').attr({
+                                        type: 'text',
+                                        name: 'field' + item
+                                    }).css({
+                                        "width": "100%",
+                                        "box-sizing": "border-box",
+                                        "padding": "10px",
+                                        "border": "1px solid #ccc",
+                                        "border-radius": "4px",
+                                        "margin-bottom": "10px"
+                                    });
+                                    input.attr("id", item)
+
+                                    if (k == 0) {
+                                    
+                                        let getId = sendRequestNoCallback("api/" + selezionato.replace(/\s/g, '') + "/getLastId", "POST");
+                                        getId.fail(function (jqXHR) {
+                                            console.log(jqXHR.status)
+                                        })
+                                        getId.done(function (serverData) {
+                                            $("#caselle :input:first").val(serverData + 1).prop('disabled', true);
+
+                                        })
+                                        var div = $('<div>').append(label, input);
+                                        $('#caselle').append(div);
+                                    }
+                                    else {
+                                        if (item == "IdZona") {
+
+                                            input.val($("#modelBody").children().eq(2).attr("id"))
+                                            input.attr('disabled', true);
+                                            var div = $('<div>').append(label, input);
+                                            $('#caselle').append(div);
+                                        }
+                                        else {
+
+                                            if (item == "Varieta") {
+                                                var comboBox = $('<select></select>').css({
+                                                    "width": "100%",
+                                                    "box-sizing": "border-box",
+                                                    "padding": "10px",
+                                                    "border": "1px solid #ccc",
+                                                    "border-radius": "4px",
+                                                    "margin-bottom": "10px"
+                                                });
+                                                comboBox.attr('id', item);
+                                                comboBox.append('<option value="elemento1">Araldino</option>');
+                                                comboBox.append('<option value="elemento2">Gigowak</option>');
+                                                var div = $('<div>').append(label, comboBox);
+                                                $('#caselle').append(div);
+
+                                            }
+                                            else {
+                                                var div = $('<div>').append(label, input);
+                                                $('#caselle').append(div);
+
+                                            }
+                                        }
+                                    }
+                                }
 
 
-                        })
-                        var div = $('<div>').append(label, comboBox);
-                        $('#caselle').append(div);
-                                     
+                            }
+                        }
+                        k++;
+                    }
 
-                    })
-                
-                }
-                else {
-                    if (selezionato == "concimazione") {
-
-
-                        let getId = sendRequestNoCallback("api/" + "concimi" + "/getAllConcimi", "GET");
+                    if (selezionato == "sfemminellatura" || selezionato == "raccolta") {
+                        let getId = sendRequestNoCallback("api/" + "operai" + "/getAllOperai", "GET");
                         getId.fail(function (jqXHR) {
                             console.log(jqXHR.status)
                         })
@@ -430,12 +417,11 @@ function loadMapScenario() {
                             console.log(serverData)
                             let intest = Object.keys(serverData[0]);
 
-                            var label = $('<label>').text(intest[1] + "concime" + ": ").css({
+                            var label = $('<label>').text(intest[2] + "operario" + ": ").css({
                                 "display": "block",
                                 "margin-bottom": "5px",
 
                             });
-                    
                             var comboBox = $('<select></select>', { multiple: true }).css({
                                 "width": "100%",
                                 "box-sizing": "border-box",
@@ -444,24 +430,27 @@ function loadMapScenario() {
                                 "border-radius": "4px",
                                 "margin-bottom": "10px"
                             });
-                            comboBox.attr('id', 'concimeUtilizzato');
+                            comboBox.attr('id', "operaio");
                             serverData.forEach(function (item) {
+                                console.log(item)
+                                comboBox.append($('<option></option>').attr('value', item.IdOperaio).text(item.Nome));
 
-                                comboBox.append($('<option></option>').attr('value', item.IdConcime).text(item.Nome));
 
-                                console.log(item.Nome)
 
 
                             })
                             var div = $('<div>').append(label, comboBox);
                             $('#caselle').append(div);
+
+
                         })
+
                     }
                     else {
-                        if (selezionato == "trattamenti") {
+                        if (selezionato == "concimazione") {
 
 
-                            let getId = sendRequestNoCallback("api/" + "fitofarmaci" + "/getAllFitofarmaci", "GET");
+                            let getId = sendRequestNoCallback("api/" + "concimi" + "/getAllConcimi", "GET");
                             getId.fail(function (jqXHR) {
                                 console.log(jqXHR.status)
                             })
@@ -469,16 +458,12 @@ function loadMapScenario() {
                                 console.log(serverData)
                                 let intest = Object.keys(serverData[0]);
 
-                                var label = $('<label>').text(intest[1] + "fitofarmaco" + ": ").css({
+                                var label = $('<label>').text(intest[1] + "concime" + ": ").css({
                                     "display": "block",
                                     "margin-bottom": "5px",
 
                                 });
-                                var label = $("<label>").text("Multi-select").css({
-                                    "display": "block",
-                                    "margin-bottom": "5px",
 
-                                });;
                                 var comboBox = $('<select></select>', { multiple: true }).css({
                                     "width": "100%",
                                     "box-sizing": "border-box",
@@ -487,230 +472,398 @@ function loadMapScenario() {
                                     "border-radius": "4px",
                                     "margin-bottom": "10px"
                                 });
-                                comboBox.attr('id', 'trattamentoSelezionato');
+                                comboBox.attr('id', 'concimeUtilizzato');
                                 serverData.forEach(function (item) {
 
-                                    comboBox.append($('<option></option>').attr('value', item.IdFitofarmaco).text(item.Nome));
+                                    comboBox.append($('<option></option>').attr('value', item.IdConcime).text(item.Nome));
 
                                     console.log(item.Nome)
 
 
                                 })
-
-
-                                
                                 var div = $('<div>').append(label, comboBox);
                                 $('#caselle').append(div);
-                          
-
                             })
                         }
-                       
+                        else {
+                            if (selezionato == "trattamenti") {
+                        let getId = sendRequestNoCallback("api/" + "fitofarmaci" + "/getAllFitofarmaci", "GET");
+                        getId.fail(function (jqXHR) {
+                            console.log(jqXHR.status)
+                        })
+                        getId.done(function (serverData) {
+                            console.log(serverData)
+                            let intest = Object.keys(serverData[0]);
+
+                            var label = $('<label>').text(intest[1] + "fitofarmaco" + ": ").css({
+                                "display": "block",
+                                "margin-bottom": "5px",
+
+                            });
+                            var label = $("<label>").text("Multi-select").css({
+                                "display": "block",
+                                "margin-bottom": "5px",
+
+                            });;
+                            var comboBox = $('<select></select>', { multiple: true }).css({
+                                "width": "100%",
+                                "box-sizing": "border-box",
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "border-radius": "4px",
+                                "margin-bottom": "10px"
+                            });
+                            comboBox.attr('id', 'trattamentoSelezionato');
+                            serverData.forEach(function (item) {
+                                comboBox.append($('<option></option>').attr('value', item.IdFitofarmaco).text(item.Nome));
+                            })
+                            var div = $('<div>').append(label, comboBox);
+                            $('#caselle').append(div);
+                            })
+                            }
+
+                        }
+
                     }
+                    $("#insert").html(" ")
+                    $("#insert").css({
+                        "width": "100%",
+                        "padding-right": "10px",
+                        "padding-left": "10px",
+
+                    })
+                    var buttonUpdate = $('<button></button>');
+                    buttonUpdate.attr('id', 'insertButton');
+                    buttonUpdate.text('INSERISCI');
+                    buttonUpdate.css({
+                        "width": "100%",
+                        "text-align": "center",
+                        "padding": "10px",
+                        "color": "black",
+                        "font-weight":"bold",
+                        "margin-bottom": "10px",
+                        
+                    });
                    
-                }
-                $("#insert").html(" ")
-                $("#insert").css({
-                    "width": "100%",
-                    "padding-right": "10px",
-                    "padding-left": "10px",
-                    
-                })
-                var buttonUpdate = $('<button></button>');
-                buttonUpdate.attr('id', 'insertButton');
-                buttonUpdate.text('INSERISCI');
-                buttonUpdate.css({
-                    "width": "100%",
-                    "box-sizing": "border-box",
-                    "padding": "10px",
-                    "border": "1px solid #ccc",
-                    "border-radius": "4px",
-                    "margin-bottom": "10px",
-                    'background-color': 'grey'
+                    //padding - right: 90px
+                    buttonUpdate.appendTo('#insert');
+                    buttonUpdate.on("click", function () {
+
+
+                        switch ($('input[type="text"]:first').attr("id")) {
+                            case 'IdRaccolta':
+                                if ($("#Data").val() != "" && $("#Quantita").val() != "" && $("#operaio option:selected").attr('value') != undefined) {
+                                    let postData = "{idRaccolta: '" + $('input[type="text"]:first').val() + "', dataRaccolta: '" + $("#Data").val() + "', quantita: '" + $("#Quantita").val() + "', idZona: '" + $("#IdZona").val() + "', idRaccoltaFinale: '" + $("#raccoltaFinale").val().charAt(0) + "'}";
+                                    let getID11 = sendRequestNoCallback("api/" + "raccolta" + "/insert" + "/", "POST", postData);
+                                    getID11.fail(function (jqXHR) {
+                                        errore(jqXHR);
+                                        console.log(serverData);
+                                        $("#lblMessage").val(serverData).css({
+                                            "color": "white"
+                                        })
+
+                                        $("#messaggioInserimentoSbagliato").show();
+                                        $("#btnNonConfermaInserimento").on("click", function () {
+                                            $("#messaggioInserimentoSbagliato").hide();
+                                        })
+
+                                    })
+                                    getID11.done(function (serverData) {
+                                        $("#lblMessage").text(serverData)
+                                        console.log(serverData)
+                                        for (let i = 0; i < ($("#operaio").val().length); i++) {
+                                            let postData1 = "{idRaccolta: '" + $('input[type="text"]:first').val() + "', idOperaio: '" + $("#operaio").val()[i] + "', dataRaccolta: '" + $("#Data").val() + "'}";
+                                            let getID111 = sendRequestNoCallback("api/" + "esecuzioneRaccolta" + "/insert" + "/", "POST", postData1);
+                                            getID111.fail(function (jqXHR) {
+                                                errore(jqXHR);
+                                                console.log(serverData);
+                                                $("#lblMessage").val(serverData).css({
+                                                    "color": "white"
+                                                })
+                                                $("#messaggioInserimentoSbagliato").show();
+
+                                            })
+                                            getID111.done(function (serverData) {
+                                                $("#lblMessage").text(serverData)
+                                                console.log(serverData)
+                                                $("#messaggioInserimento").show();
+                                                $("#btnConfermaModifiche").on("click", function () {
+                                                    location.reload();
+                                                })
+                                            })
+                                        }
+                                    })
+                                }
+                                else {
+                                    $("#messaggioInserimentoSbagliato").show();
+                                    $("#btnNonConfermaInserimento").on("click", function () {
+                                        $("#messaggioInserimentoSbagliato").hide();
+                                    })
+                                }
+
+
+
+                                break;
+
+                            case 'IdConcimazione':
+                                var selectedTexts = $('#concimeUtilizzato option:selected').map(function () {
+                                    return $(this).text();
+                                }).get();
+                                console.log(selectedTexts[0])
+                                if ($("#Data").val() != "" && $("#concimeUtilizzato").val() != undefined) {
+
+                                    let Data = "{idConcimazione: '" + $('input[type="text"]:first').val() + "', dataConcimazione: '" + $("#Data").val() + "', idZona: '" + $("#IdZona").val() + "'}";
+                                    let getID12 = sendRequestNoCallback("api/" + "concimazione" + "/insert" + "/", "POST", Data);
+                                    getID12.fail(function (jqXHR) {
+                                        errore(jqXHR);
+                                        console.log(serverData);
+                                        $("#lblMessage").text(serverData)
+                                        $("#messaggioInserimentoSbagliato").show();
+                                        $("#btnNonConfermaInserimento").on("click", function () {
+                                            $("#messaggioInserimentoSbagliato").hide();
+                                        })
+                                    })
+                                    getID12.done(function (serverData) {
+                                        $("#lblMessage").text(serverData)
+                                        for (let i = 0; i < ($("#concimeUtilizzato").val().length); i++) {
+                                            let postData1 = "{idConcimazione: '" + $('input[type="text"]:first').val() + "', idConcime: '" + $("#concimeUtilizzato").val()[i] + "', nome: '" + selectedTexts[i] + "'}";
+                                            let getID111 = sendRequestNoCallback("api/" + "concimeUtilizzato" + "/insert" + "/", "POST", postData1);
+                                            getID111.fail(function (jqXHR) {
+                                                errore(jqXHR);
+                                                console.log(serverData);
+                                                $("#lblMessage").val(serverData).css({
+                                                    "color": "white"
+                                                })
+                                                $("#messaggioInserimentoSbagliato").show();
+                                                $("#btnNonConfermaInserimento").on("click", function () {
+                                                    $("#messaggioInserimentoSbagliato").hide();
+                                                })
+                                            })
+                                            getID111.done(function (serverData) {
+                                                $("#lblMessage").text(serverData)
+                                                console.log(serverData)
+                                                $("#messaggioInserimento").show();
+                                                $("#btnConfermaModifiche").on("click", function () {
+                                                    location.reload();
+                                                })
+                                            })
+                                        }
+                                    })
+                                }
+                                else {
+                                    $("#messaggioInserimentoSbagliato").show();
+                                    $("#btnNonConfermaInserimento").on("click", function () {
+                                        $("#messaggioInserimentoSbagliato").hide();
+                                    })
+                                }
+                                break;
+
+                            case 'IdLancioInsetti':
+                                if ($("#Data").val() != "") {
+                                    let Dat1 = "{id: '" + $('input[type="text"]:first').val() + "', dataLancioInsetti: '" + $("#Data").val() + "', idZona: '" + $("#IdZona").val() + "'}";
+                                    let getID13 = sendRequestNoCallback("api/" + "lancioInsetti" + "/insert" + "/", "POST", Dat1);
+                                    getID13.fail(function (jqXHR) {
+                                        errore(jqXHR);
+                                        console.log(serverData);
+                                        $("#lblMessage").text(serverData)
+                                        $("#messaggioInserimentoSbagliato").show();
+                                        $("#btnNonConfermaInserimento").on("click", function () {
+                                            $("#messaggioInserimentoSbagliato").hide();
+                                        })
+                                    })
+                                    getID13.done(function (serverData) {
+                                        $("#lblMessage").text(serverData)
+                                        $("#messaggioInserimento").show();
+                                        $("#btnConfermaModifiche").on("click", function () {
+                                            location.reload();
+                                        })
+                                    })
+                                }
+                                else {
+                                    $("#messaggioInserimentoSbagliato").show();
+                                    $("#btnNonConfermaInserimento").on("click", function () {
+                                        $("#messaggioInserimentoSbagliato").hide();
+                                    })
+                                }
+                                break;
+                            case 'IdTrattamento':
+                                var selectedTexts = $('#trattamentoSelezionato option:selected').map(function () {
+                                    return $(this).text();
+                                }).get();
+                                console.log(selectedTexts[0])
+                                if ($("#Data").val() != "" && $("#trattamentoSelezionato").val() != undefined) {
+                                    let Data2 = "{idTrattamento: '" + $('input[type="text"]:first').val() + "', dataTrattamento: '" + $("#Data").val() + "', idZona: '" + $("#IdZona").val() + "'}";
+                                    let getID124 = sendRequestNoCallback("api/" + "trattamenti" + "/insert" + "/", "POST", Data2);
+                                    getID124.fail(function (jqXHR) {
+                                        errore(jqXHR);
+                                        console.log(serverData);
+                                        $("#lblMessage").text(serverData)
+                                        $("#messaggioInserimentoSbagliato").show();
+                                        $("#btnNonConfermaInserimento").on("click", function () {
+                                            $("#messaggioInserimentoSbagliato").hide();
+                                        })
+                                    })
+                                    getID124.done(function (serverData) {
+                                        $("#lblMessage").text(serverData)
+                                        for (let i = 0; i < ($("#trattamentoSelezionato").val().length); i++) {
+                                            let postData12 = "{idTrattamento: '" + $('input[type="text"]:first').val() + "', idFitofarmaco: '" + $("#trattamentoSelezionato").val()[i] + "', nome: '" + selectedTexts[i] + "'}";
+                                            let getID1114 = sendRequestNoCallback("api/" + "fitofarmacoUtilizzato" + "/insert" + "/", "POST", postData12);
+                                            getID1114.fail(function (jqXHR) {
+                                                errore(jqXHR);
+                                                console.log(serverData);
+                                                $("#lblMessage").val(serverData).css({
+                                                    "color": "white"
+                                                })
+                                                $("#messaggioInserimentoSbagliato").show();
+                                                $("#btnNonConfermaInserimento").on("click", function () {
+                                                    $("#messaggioInserimentoSbagliato").hide();
+                                                })
+                                            })
+                                            getID1114.done(function (serverData) {
+                                                $("#lblMessage").text(serverData)
+                                                console.log(serverData)
+                                                $("#messaggioInserimento").show();
+                                                $("#btnConfermaModifiche").on("click", function () {
+                                                    location.reload();
+                                                })
+                                            })
+
+                                        }
+                                    })
+                                }
+                                else {
+                                    $("#messaggioInserimentoSbagliato").show();
+                                    $("#btnNonConfermaInserimento").on("click", function () {
+                                        $("#messaggioInserimentoSbagliato").hide();
+                                    })
+                                }
+
+                                break;
+                            case 'IdSfemminellatura':
+                                console.log($("#operaio option:selected").attr('value'))
+                                if ($("#operaio option:selected").attr('value') != undefined && $("#Data").val() != "") {
+                                    console.log("ciao")
+                                    let postData4 = "{idSfemminellatura: '" + $('input[type="text"]:first').val() + "', dataSfemminellatura: '" + $("#Data").val() + "', idZona: '" + $("#IdZona").val() + "'}";
+                                    let getID114 = sendRequestNoCallback("api/" + "sfemminellatura" + "/insert" + "/", "POST", postData4);
+                                    getID114.fail(function (jqXHR) {
+                                        console.log(jqXHR)
+                                        errore(jqXHR);
+                                        console.log(serverData);
+                                        $("#lblMessage").val(serverData).css({
+                                            "color": "white"
+                                        })
+                                        $("#messaggioInserimentoSbagliato").show();
+                                        $("#btnNonConfermaInserimento").on("click", function () {
+                                            $("#messaggioInserimentoSbagliato").hide();
+                                        })
+
+                                    })
+                                    getID114.done(function (serverData) {
+
+                                        $("#lblMessage").text(serverData)
+                                        console.log(serverData)
+
+                                        for (let i = 0; i < ($("#operaio").val().length); i++) {
+
+                                            let postData14 = "{idSfemminellatura: '" + $('input[type="text"]:first').val() + "', idOperaio: '" + $("#operaio").val()[i] + "', dataSfemminellatura: '" + $("#Data").val() + "'}";
+                                            let getID1114 = sendRequestNoCallback("api/" + "esecuzioneSfemminellatura" + "/insert" + "/", "POST", postData14);
+                                            getID1114.fail(function (jqXHR) {
+                                                errore(jqXHR);
+
+                                                $("#lblMessage").val(serverData).css({
+                                                    "color": "white"
+                                                })
+                                                $("#messaggioInserimentoSbagliato").show();
+                                                $("#btnNonConfermaInserimento").on("click", function () {
+                                                    $("#messaggioInserimentoSbagliato").hide();
+                                                })
+                                                console.log(serverData);
+                                            })
+                                            getID1114.done(function (serverData) {
+                                                $("#lblMessage").text(serverData)
+
+                                                $("#messaggioInserimento").show();
+                                                $("#btnConfermaModifiche").on("click", function () {
+                                                    location.reload();
+                                                })
+                                                console.log(serverData)
+                                            })
+
+                                        }
+
+
+                                    })
+                                }
+                                else {
+                                    $("#messaggioInserimentoSbagliato").show();
+                                    $("#btnNonConfermaInserimento").on("click", function () {
+                                        $("#messaggioInserimentoSbagliato").hide();
+                                    })
+                                }
+                                break;
+                            case 'IdRilevamentoUmidita':
+                              
+                                    let Dat33 = "{id: '" + row.attr("id").replace(/\D/g, '') + "', valoreUmidita: '" + $("#ValoreUmidita").val() + "', idZona: '" + $("#IdZona").val() + "', dataOra: '" + $("#DataOra").val() + "'}";
+                                    let getID263 = sendRequestNoCallback("api/" + row.attr("id").replace(/[^a-zA-Z]/g, '') + "/update" + "/", "POST", Dat33);
+                                    getID263.fail(function (jqXHR) {
+                                        errore(jqXHR);
+                                        $("#lblMessage").text(serverData)
+                                    })
+                                    getID263.done(function (serverData) {
+                                        $("#lblMessage").text(serverData)
+                                    })
+                                    break;
+                            case 'IdPiantato':
+                                if ($("#Data").val() != "" && $("#Varieta").val()!="" && $("#NumPiante").val()!="") {
+                                    let Dat345 = "{idPiantato: '" + $('input[type="text"]:first').val() + "', numPiante: '" + $("#NumPiante").val() + "', idZona: '" + $("#IdZona").val() + "', dataPiantata: '" + $("#Data").val() + "', varieta: '" + $("#Varieta :selected").text() + "'}";
+                                    let getID2654 = sendRequestNoCallback("api/" + "piantato" + "/insertPiantato" + "/", "POST", Dat345);
+                                    getID2654.fail(function (jqXHR) {
+                                        errore(jqXHR);
+                                        $("#lblMessage").text(serverData)
+                                        $("#messaggioInserimentoSbagliato").show();
+                                        $("btnNonConfermaInserimento").on("click", function () {
+                                            $("#messaggioInserimentoSbagliato").hide();
+                                        })
+                                    })
+                                    getID2654.done(function (serverData) {
+                                        $("#lblMessage").text(serverData)
+                                        $("#messaggioInserimento").show();
+                                        $("#btnConfermaModifiche").on("click", function () {
+                                            location.reload();
+                                        })
+                                    })
+
+                                }
+                                else {
+                                    $("#messaggioInserimentoSbagliato").show();
+                                    $("#btnNonConfermaInserimento").on("click", function () {
+                                        $("#messaggioInserimentoSbagliato").hide();
+                                    })
+                                }
+
+                                break;
+
+                            default:
+                        }
+
+                    })
+
+
                 });
-                buttonUpdate.appendTo('#insert');
-                buttonUpdate.on("click", function () {
-                   
-                   
-                    switch ($('input[type="text"]:first').attr("id")) {
-                        case 'IdRaccolta':
-                            console.log($("#operaio option:selected").attr('value'))
-                            let postData = "{idRaccolta: '" + $('input[type="text"]:first').val() + "', dataRaccolta: '" + $("#Data").val() + "', quantita: '" + $("#Quantita").val() + "', idZona: '" + $("#IdZona").val() + "', idRaccoltaFinale: '" + $("#raccoltaFinale").val().charAt(0) + "'}";
-                            let getID11 = sendRequestNoCallback("api/" + "raccolta" + "/insert" + "/", "POST", postData);
-                            getID11.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                console.log(serverData);
-                                $("#lblMessage").val(serverData).css({
-                                    "color": "white"
-                                })
-                            })
-                            getID11.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                                console.log(serverData)
-                                for (let i = 0; i < ($("#operaio").val().length); i++) {
-                                    let postData1 = "{idRaccolta: '" + $('input[type="text"]:first').val() + "', idOperaio: '" + $("#operaio").val()[i] + "', dataRaccolta: '" + $("#Data").val() + "'}";
-                                    let getID111 = sendRequestNoCallback("api/" + "esecuzioneRaccolta" + "/insert" + "/", "POST", postData1);
-                                    getID111.fail(function (jqXHR) {
-                                        errore(jqXHR);
-                                        console.log(serverData);
-                                        $("#lblMessage").val(serverData).css({
-                                            "color": "white"
-                                        })
-                                    })
-                                    getID111.done(function (serverData) {
-                                        $("#lblMessage").text(serverData)
-                                        console.log(serverData)
-                                    })
-                                }
-                            })
-                          
-                            
-                            break;
 
-                        case 'IdConcimazione':
-                            var selectedTexts = $('#concimeUtilizzato option:selected').map(function () {
-                                return $(this).text();
-                            }).get();
-                            console.log(selectedTexts[0])
-                            let Data = "{idConcimazione: '" + $('input[type="text"]:first').val() + "', dataConcimazione: '" + $("#Data").val() +  "', idZona: '" + $("#IdZona").val() + "'}";
-                            let getID12 = sendRequestNoCallback("api/" + "concimazione" + "/insert" + "/", "POST", Data);
-                            getID12.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                console.log(serverData);
-                                $("#lblMessage").text(serverData)
-                            })
-                            getID12.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                                for (let i = 0; i < ($("#concimeUtilizzato").val().length); i++) {
-                                    let postData1 = "{idConcimazione: '" + $('input[type="text"]:first').val() + "', idConcime: '" + $("#concimeUtilizzato").val()[i] + "', nome: '" + selectedTexts[i] + "'}";
-                                    let getID111 = sendRequestNoCallback("api/" + "concimeUtilizzato" + "/insert" + "/", "POST", postData1);
-                                    getID111.fail(function (jqXHR) {
-                                        errore(jqXHR);
-                                        console.log(serverData);
-                                        $("#lblMessage").val(serverData).css({
-                                            "color": "white"
-                                        })
-                                    })
-                                    getID111.done(function (serverData) {
-                                        $("#lblMessage").text(serverData)
-                                        console.log(serverData)
-                                    })
-                                }
-                            })
-                           
-                            break;
-
-                        case 'IdLancioInsetti':
-                            let Dat1 = "{id: '" + $('input[type="text"]:first').val() + "', dataLancioInsetti: '" + $("#Data").val() + "', idZona: '" + $("#IdZona").val() + "'}";
-                            let getID13 = sendRequestNoCallback("api/" + "lancioInsetti" + "/insert" + "/", "POST", Dat1);
-                            getID13.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                console.log(serverData);
-                                $("#lblMessage").text(serverData)
-                            })
-                            getID13.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                            })
-                            break;
-                        case 'IdTrattamento':
-                            var selectedTexts = $('#trattamentoSelezionato option:selected').map(function () {
-                                return $(this).text();
-                            }).get();
-                            console.log(selectedTexts[0])
-                            let Data2 = "{idTrattamento: '" + $('input[type="text"]:first').val() + "', dataTrattamento: '" + $("#Data").val() + "', idZona: '" + $("#IdZona").val() + "'}";
-                            let getID124 = sendRequestNoCallback("api/" + "trattamenti" + "/insert" + "/", "POST", Data2);
-                            getID124.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                console.log(serverData);
-                                $("#lblMessage").text(serverData)
-                            })
-                            getID124.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                                for (let i = 0; i < ($("#trattamentoSelezionato").val().length); i++) {
-                                    let postData12 = "{idTrattamento: '" + $('input[type="text"]:first').val() + "', idFitofarmaco: '" + $("#trattamentoSelezionato").val()[i] + "', nome: '" + selectedTexts[i] + "'}";
-                                    let getID1114 = sendRequestNoCallback("api/" + "fitofarmacoUtilizzato" + "/insert" + "/", "POST", postData12);
-                                    getID1114.fail(function (jqXHR) {
-                                        errore(jqXHR);
-                                        console.log(serverData);
-                                        $("#lblMessage").val(serverData).css({
-                                            "color": "white"
-                                        })
-                                    })
-                                    getID1114.done(function (serverData) {
-                                        $("#lblMessage").text(serverData)
-                                        console.log(serverData)
-                                    })
-                                }
-                            })
-                            
-                            break;
-                        case 'IdSfemminellatura':
-                            console.log($("#operaio option:selected").attr('value'))
-                            let postData4 = "{idSfemminellatura: '" + $('input[type="text"]:first').val() + "', dataSfemminellatura: '" + $("#Data").val() +  "', idZona: '" + $("#IdZona").val()  + "'}";
-                            let getID114 = sendRequestNoCallback("api/" + "sfemminellatura" + "/insert" + "/", "POST", postData4);
-                            getID114.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                console.log(serverData);
-                                $("#lblMessage").val(serverData).css({
-                                    "color": "white"
-                                })
-                            })
-                            getID114.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                                console.log(serverData)
-                                for (let i = 0; i < ($("#operaio").val().length); i++) {
-                                    let postData14 = "{idSfemminellatura: '" + $('input[type="text"]:first').val() + "', idOperaio: '" + $("#operaio").val()[i] + "', dataSfemminellatura: '" + $("#Data").val() + "'}";
-                                    let getID1114 = sendRequestNoCallback("api/" + "esecuzioneSfemminellatura" + "/insert" + "/", "POST", postData14);
-                                    getID1114.fail(function (jqXHR) {
-                                        errore(jqXHR);
-                                        console.log(serverData);
-                                        $("#lblMessage").val(serverData).css({
-                                            "color": "white"
-                                        })
-                                    })
-                                    getID1114.done(function (serverData) {
-                                        $("#lblMessage").text(serverData)
-                                        console.log(serverData)
-                                    })
-                                }
-                            })
-                           
-
-                            break;
-                        case 'IdRilevamentoUmidita':
-
-                            let Dat33 = "{id: '" + row.attr("id").replace(/\D/g, '') + "', valoreUmidita: '" + $("#ValoreUmidita").val() + "', idZona: '" + $("#IdZona").val() + "', dataOra: '" + $("#DataOra").val() + "'}";
-                            let getID263 = sendRequestNoCallback("api/" + row.attr("id").replace(/[^a-zA-Z]/g, '') + "/update" + "/", "POST", Dat33);
-                            getID263.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                $("#lblMessage").text(serverData)
-                            })
-                            getID263.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                            })
-                            break;
-                        case 'IdPiantato':
-                            let Dat345 = "{idPiantato: '" + $('input[type="text"]:first').val() + "', numPiante: '" + $("#NumPiante").val() + "', idZona: '" + $("#IdZona").val() + "', dataPiantata: '" + $("#Data").val() + "', varieta: '" + $("#Varieta :selected").text() + "'}";
-                            let getID2654 = sendRequestNoCallback("api/" + "piantato" + "/insertPiantato" + "/", "POST", Dat345);
-                            getID2654.fail(function (jqXHR) {
-                                errore(jqXHR);
-                                $("#lblMessage").text(serverData)
-                            })
-                            getID2654.done(function (serverData) {
-                                $("#lblMessage").text(serverData)
-                            })
-                            break;
-
-                        default:
-                    }
-                   
-                })
-               
-         
             });
+        });
+        
            
-        })
+        
     })
+}
+function confermaModifiche() {
+   
+}
+function confermaNonModifiche() {
+  
+    
 }
 function errore(jqXHR) {
     console.log("Errore esecuzione web service ASP.Net");

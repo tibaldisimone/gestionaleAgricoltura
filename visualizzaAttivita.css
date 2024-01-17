@@ -228,16 +228,14 @@ thead th {
     position: sticky;
     top: 0;
     left: 0;
-    background-color: #d5d1defe;
+    color:black;
+    font-weight:bold;
     cursor: pointer;
     text-transform: capitalize;
-
+    background-color: #f8f8f8;
 }
 
 
-tbody tr:nth-child(even) {
-    background-color: #0000000b;
-}
 
 tbody tr {
     --delay: .1s;

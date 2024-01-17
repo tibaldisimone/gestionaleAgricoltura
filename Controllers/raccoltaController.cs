@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.WebPages;
+using System.Runtime.Serialization;
 
 namespace esercizioProva.Controllers
 {
@@ -98,7 +100,7 @@ namespace esercizioProva.Controllers
                 raccolto.Quantita = Convert.ToInt32(_dr["quantita"]);
                 raccolto.IdZona = Convert.ToInt32(_dr["idZona"]);
                 raccolto.IdRaccoltaFinale = Convert.ToInt32(_dr["idRaccoltaFinale"]);
-                raccolto.Nome = Convert.ToString(_dr["nome"]);
+                raccolto.CognomeOperaio = Convert.ToString(_dr["cognomeOperaio"]);
                 _lstRaccolte.Add(raccolto);
             }
 

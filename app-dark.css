@@ -17,6 +17,17 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
+#divTabelle {
+    background-color: #fff; /* Colore di sfondo bianco del div */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Ombra nera */
+    padding-left: 70px; /* Spaziatura interna del div */
+    padding-right: 70px;
+    padding-bottom: 20px;
+    margin-top: 30px;
+    margin-left: 30px;
+    margin-right: 30px;
+    border-radius: 15px
+}
 .cookiesContent {
   
 
@@ -214,14 +225,14 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
   display: block; }
 
 body {
-  margin: 0;
-  font-family: "Overpass", sans-serif;
-  font-size: 0.875rem;
-  font-weight: 400;
-
-  color: #ced4da;
-  text-align: left;
-  background-color: #212529; }
+    margin: 0;
+    font-family: "Overpass", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #ced4da;
+    text-align: left;
+    background-color: white;
+}
 
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: 0 !important; }
@@ -334,7 +345,17 @@ svg {
   vertical-align: middle; }
 
 table {
-  border-collapse: collapse; }
+  border-collapse: collapse; 
+  border-right:none;
+  background-color:white;
+  color:black;
+}
+
+tr{
+    
+    border-top: 2px solid grey;
+    padding:30px;
+}
 
 caption {
   padding-top: 0.75rem;
@@ -3176,12 +3197,14 @@ input[type="button"].btn-block {
   display: block; }
 
 .navbar {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem; }
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background-color: #180e3c;
+}
   .navbar .container,
   .navbar .container-fluid, .navbar .container-sm, .navbar .container-md, .navbar .container-lg, .navbar .container-xl {
     display: flex;
@@ -7599,8 +7622,10 @@ button:focus {
 
 /* collapsed layout with sidebar */
 .vertical.collapsed .sidebar-left, .vertical.narrow .sidebar-left {
-  min-width: 5rem;
-  width: 5rem; }
+    min-width: 5rem;
+    width: 5rem;
+    
+}
   .vertical.collapsed .sidebar-left .navbar-toggler,
   .vertical.collapsed .sidebar-left .nav-heading,
   .vertical.collapsed .sidebar-left .btn-box, .vertical.narrow .sidebar-left .navbar-toggler,
@@ -8199,7 +8224,8 @@ h1, h2, h3, h4, h5, h6, strong {
 
 /* force bg-white on dark mode */
 .bg-white {
-  background: #343a40 !important; }
+    background: #180e3c !important;
+}
 
 svg.navbar-brand-img {
   fill: #1b68ff; }

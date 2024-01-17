@@ -12,13 +12,13 @@ namespace esercizioProva.Models
         private int quantita;
         private int idZona;
         private int idRaccoltaFinale;
-        private string nome;
+        private string cognomeOperaio;
 
         public int IdRaccolta { get => idRaccolta; set => idRaccolta = value; }
         public DateTime Data { get => data; set => data = value; }
         public int Quantita { get => quantita; set => quantita = value; }
         public int IdZona { get => idZona; set => idZona = value; }
         public int IdRaccoltaFinale { get => idRaccoltaFinale; set => idRaccoltaFinale = value; }
-        public string Nome { get => nome; set => nome = value; }
+        public string CognomeOperaio { get => cognomeOperaio; set => cognomeOperaio = value; }
     }
 }

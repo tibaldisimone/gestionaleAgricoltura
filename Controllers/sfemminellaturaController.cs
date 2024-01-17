@@ -93,7 +93,7 @@ namespace esercizioProva.Controllers
                 sfemminellatura.IdSfemminellatura = Convert.ToInt32(_dr["idSfemminellatura"]);
                 sfemminellatura.Data = Convert.ToDateTime(_dr["data"]);
                 sfemminellatura.IdZona = Convert.ToInt32(_dr["idZona"]);
-                sfemminellatura.Nome = Convert.ToString(_dr["nome"]);
+                sfemminellatura.Nome = Convert.ToString(_dr["cognomeOperaio"]);
                 
                 _lstSfemminellatura.Add(sfemminellatura);
             }

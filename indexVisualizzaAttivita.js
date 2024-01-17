@@ -1,12 +1,12 @@
-﻿$(() => {
+﻿$(window).on('load', function () {
+    $(".line").hide();
     let vect = new Array("lancioInsetti", "trattamenti", "sfemminellatura", "concimazione", "piantato", "raccolta");
-
-    let p = 0;
-    let tipo = "";
+   
     var parametro = new URLSearchParams(window.location.search).get("parametro");
-    for (let i = 0; i<vect.length; i++) {
+    for (let i = 0; i < vect.length; i++) {
         let postData = "{idZona: '" + parametro + "'}";
         let dati = sendRequestNoCallback("api/" + vect[i] + "/getAll" + vect[i] + "Zone", "POST", postData);
+
         dati.fail(function (jqXHR) {
             errore(jqXHR);
             console.log(serverData);
@@ -16,13 +16,16 @@
             var table = $('<table>');
             var thead = $('<thead>');
             var tbody = $('<tbody>');
-            var dynamicText = vect[i] + '<i class="fa fa-angle-right" style="font-size:45px" id="iconMaggiore"></i>';
+            var dynamicText = "Dettagli " +vect[i];
             var dynamicH1 = $("<h1></h1>");
             dynamicH1.html(dynamicText)
             thead.append(dynamicH1)
             dynamicH1.css({
 
-                "padding-left": "10px",
+               
+                "margin-top": "25px",
+                "margin-bottom":"25px"
+
 
             })
             var headerRow = $('<tr>');
@@ -41,25 +44,25 @@
             let raccolta;
             let trattamento;
             serverData.forEach(function (item) {
-               
+
                 if (item.IdSfemminellatura != undefined) {
-                    let nome = " ";
+                    let nomeOperaio = " ";
                     if (sfemminellatura != item.IdSfemminellatura) {
                         sfemminellatura = item.IdSfemminellatura;
                         for (let l = 0; l < serverData.length; l++) {
-                            let ciao = Object.values(serverData[l])
-                            if (sfemminellatura == ciao[0]) {
-                                console.log(sfemminellatura)
-                                console.log(ciao[0])
-                                nome += ciao[3] + " "
+                            let descrizioneOperaio = Object.values(serverData[l])
+                            if (sfemminellatura == descrizioneOperaio[0]) {
+                               
+                                nomeOperaio += "- " + descrizioneOperaio[3] + " <br>"
                             }
                         }
+                        
                         var row = $('<tr>');
                         row.append($('<td>').text(item.IdSfemminellatura).attr("id", "idSfemminellatura" + "Sfemminellatura" + item.IdSfemminellatura));
-                        row.append($('<td>').text(item.Data).attr("id", "data" + "Sfemminellatura" + item.IdSfemminellatura));
+                        row.append($('<td>').text(moment(item.Data).format("DD/MM/YYYY"))).attr("id", "data" + "Sfemminellatura" + item.IdSfemminellatura);
                         row.append($('<td>').text(item.IdZona).attr("id", "idZona" + "Sfemminellatura" + item.IdSfemminellatura));
-                        row.append($('<td>').text(nome).attr("id", "nome" + "Sfemminellatura" + item.IdSfemminellatura));
-                        nome = " ";
+                        row.append($('<td>').html(nomeOperaio).attr("id", "nome" + "Sfemminellatura" + item.IdSfemminellatura));
+                        nomeOperaio = " ";
                         row.attr("id", id + item.IdSfemminellatura)
                         id = 0;
                         tbody.append(row);
@@ -97,7 +100,7 @@
                             });   
 
                             $("#" + "Data").val($("#dataSfemminellatura" + $(this).attr('id')).text())
-                            console.log($("#dataSfemminellatura").text())
+
                             var numeri = [1, 2, 3, 4, 5, 6];
                             var comboBox = $('<select></select>').css({
                                 "width": "100%",
@@ -120,26 +123,25 @@
                                 console.log(jqXHR.status)
                             })
                             getId.done(function (serverData) {
-                                console.log(serverData)
+                               
                                 var values = $("#nomeSfemminellatura").text().split(" ");
                                 
-                                console.log(values)
+                              
                                 var div = $('<div>').append(label, comboBox);
                                 $('#bodyModifica').append(div);
                                 let valori = Object.values(serverData)
                                 let w = 0;
-                                console.log(valori)
+                              
                                 for (let p = 0; p < values.length; p++) {
 
                                     serverData.forEach(function (item) {
                                         if (item.Nome == values[p]) {
                                             idSelezionati[w] = item.IdOperaio;
-                                            console.log(idSelezionati[w])
                                             w++;
 
                                         }
-                                        else
-                                            console.log(idSelezionati)
+                                      
+                                        
                                     })
                                  
                                         
@@ -194,7 +196,7 @@
                                 button.on("click", function () {
 
                                     let postData4 = "{id: '" + row.attr("id").replace(/[^a-zA-Z]/g, '') + "'}";
-                                    console.log(row.attr("id").replace(/[^a-zA-Z]/g, ''))
+                                  
                                     let getID5 = sendRequestNoCallback("api/" + "esecuzioneSfemminellatura" + "/delete" + "/", "POST", postData4);
                                             getID5.fail(function (jqXHR) {
                                                 errore(jqXHR);
@@ -208,14 +210,14 @@
                                                     let getID1114 = sendRequestNoCallback("api/" + "esecuzioneSfemminellatura" + "/delete" + "/", "POST", postData14);
                                                     getID1114.fail(function (jqXHR) {
                                                         errore(jqXHR);
-                                                        console.log(serverData);
+                                                   
                                                         $("#lblMessage").val(serverData).css({
                                                             "color": "white"
                                                         })
                                                     })
                                                     getID1114.done(function (serverData) {
                                                         $("#lblMessage").text(serverData)
-                                                        console.log(serverData)
+                                                      
                                                     })
                                                 }
                                             })
@@ -238,14 +240,14 @@
                                                     let getID1114 = sendRequestNoCallback("api/" + "esecuzioneSfemminellatura" + "/update" + "/", "POST", postData14);
                                                     getID1114.fail(function (jqXHR) {
                                                         errore(jqXHR);
-                                                        console.log(serverData);
+                                                      
                                                         $("#lblMessage").val(serverData).css({
                                                             "color": "white"
                                                         })
                                                     })
                                                     getID1114.done(function (serverData) {
                                                         $("#lblMessage").text(serverData)
-                                                        console.log(serverData)
+                                                     
                                                     })
                                                 }
                                             })
@@ -263,21 +265,22 @@
                 else {
                     if (item.IdConcimazione != undefined) {
                         
-                        let nome = " ";
+                        let nomeConcime = " ";
                         if (concimazione != item.IdConcimazione) {
                             concimazione = item.IdConcimazione;
                             for (let l = 0; l < serverData.length; l++) {
-                                let ciao = Object.values(serverData[l])
-                                if (concimazione == ciao[0]) {
-                                    nome += ciao[3] + " "
+                                let descrizioneConcime = Object.values(serverData[l])
+                                if (concimazione == descrizioneConcime[0]) {
+
+                                    nomeConcime += "- " + descrizioneConcime[3] + " <br>"
                                 }
                             }
                             var row = $('<tr>');
                             row.append($('<td>').text(item.IdConcimazione));
-                            row.append($('<td>').text(item.Data));
+                            row.append($('<td>').text(moment(item.Data).format("DD/MM/YYYY")));
                             row.append($('<td>').text(item.IdZona));
-                            row.append($('<td>').text(nome));
-                            nome = " ";
+                            row.append($('<td>').html(nomeConcime));
+                            nomeConcime = " ";
                             row.attr("id", id + vect[i])
                             id = 0;
                             tbody.append(row);
@@ -290,7 +293,7 @@
                                     console.log(serverData);
                                 })
                                 getID.done(function (serverData) {
-                                    console.log(serverData)
+                              
                                     let intest = Object.keys(serverData[0]);
                                     for (let item of intest) {
 
@@ -485,7 +488,7 @@
                                         }
                                     })
                                     buttonUpdate.on("click", function () {
-                                        console.log(vettore[0])
+                                     
                                         switch (vettore[0]) {
                                             case 'IdRaccolta':
 
@@ -500,7 +503,7 @@
                                                 })
                                                 getID11.done(function (serverData) {
                                                     $("#lblMessage").text(serverData)
-                                                    console.log(serverData)
+                                                 
                                                 })
                                                 break;
 
@@ -509,7 +512,7 @@
                                                 let getID12 = sendRequestNoCallback("api/" + row.attr("id").replace(/[^a-zA-Z]/g, '') + "/update" + "/", "POST", Data);
                                                 getID12.fail(function (jqXHR) {
                                                     errore(jqXHR);
-                                                    console.log(serverData);
+                                                    
                                                     $("#lblMessage").text(serverData)
                                                 })
                                                 getID12.done(function (serverData) {
@@ -522,7 +525,7 @@
                                                 let getID13 = sendRequestNoCallback("api/" + row.attr("id").replace(/[^a-zA-Z]/g, '') + "/update" + "/", "POST", Dat1);
                                                 getID13.fail(function (jqXHR) {
                                                     errore(jqXHR);
-                                                    console.log(serverData);
+                                                   
                                                     $("#lblMessage").text(serverData)
                                                 })
                                                 getID13.done(function (serverData) {
@@ -534,7 +537,7 @@
                                                 let getID16 = sendRequestNoCallback("api/" + row.attr("id").replace(/[^a-zA-Z]/g, '') + "/update" + "/", "POST", Dat2);
                                                 getID16.fail(function (jqXHR) {
                                                     errore(jqXHR);
-                                                    console.log(serverData);
+                                                
                                                     $("#lblMessage").text(serverData)
                                                 })
                                                 getID16.done(function (serverData) {
@@ -598,27 +601,30 @@
                     else {
 
                         if (item.IdRaccolta != undefined) {
-                            console.log(serverData)
-                            let nome = " ";
+                            
+                            let cognomeOperaio = " ";
                             if (raccolta != item.IdRaccolta) {
                                 raccolta = item.IdRaccolta;
                                 for (let l = 0; l < serverData.length; l++) {
-                                    let ciao = Object.values(serverData[l])
-                                    if (raccolta == ciao[0]) {
-                                        nome += ciao[5] + " "
+                                    let descrizioneOperaio = Object.values(serverData[l])
+                                   
+                                    if (raccolta == descrizioneOperaio[0]) {
+                                        cognomeOperaio += "- " + descrizioneOperaio[5] + "<br>"
                                     }
                                 }
                                 var row = $('<tr>');
                                 row.append($('<td>').text(item.IdRaccolta));
-                                row.append($('<td>').text(item.Data));
+                                row.append($('<td>').text(moment(item.Data).format("DD/MM/YYYY")));
                                 row.append($('<td>').text(item.Quantita));
                                 row.append($('<td>').text(item.IdZona));
                                 row.append($('<td>').text(item.IdRaccoltaFinale));
-                                row.append($('<td>').text(nome));
+                                row.append($('<td>').html(cognomeOperaio));
                                 nome = " ";
                                 row.attr("id", id + vect[i])
                                 id = 0;
                                 tbody.append(row);
+                          
+                                
                                 row.on("click", function () {
                                     $("#tableModifica").show()
                                     let postData = "{id: '" + row.attr("id").replace(/\D/g, '') + "'}";
@@ -628,7 +634,7 @@
                                         console.log(serverData);
                                     })
                                     getID.done(function (serverData) {
-                                        console.log(serverData)
+                                    
                                         let intest = Object.keys(serverData[0]);
                                         for (let item of intest) {
 
@@ -823,7 +829,7 @@
                                             }
                                         })
                                         buttonUpdate.on("click", function () {
-                                            console.log(vettore[0])
+                                         
                                             switch (vettore[0]) {
                                                 case 'IdRaccolta':
 
@@ -838,7 +844,7 @@
                                                     })
                                                     getID11.done(function (serverData) {
                                                         $("#lblMessage").text(serverData)
-                                                        console.log(serverData)
+                                                      
                                                     })
                                                     break;
 
@@ -936,21 +942,21 @@
                         else {
                             if (item.IdTrattamento != undefined) {
 
-                                let nome = " ";
+                                let nomeTrattamento = " ";
                                 if (trattamento != item.IdTrattamento) {
                                     trattamento = item.IdTrattamento;
                                     for (let l = 0; l < serverData.length; l++) {
-                                        let ciao = Object.values(serverData[l])
-                                        if (trattamento == ciao[0]) {
-                                            nome += ciao[3] + " "
+                                        let descrizioneTrattamento = Object.values(serverData[l])
+                                        if (trattamento == descrizioneTrattamento[0]) {
+                                            nomeTrattamento += "- "+descrizioneTrattamento[3] + "<br>"
                                         }
                                     }
                                     var row = $('<tr>');
                                     row.append($('<td>').text(item.IdTrattamento));
-                                    row.append($('<td>').text(item.Data));
+                                    row.append($('<td>').text(moment(item.Data).format("DD/MM/YYYY")));
                                     row.append($('<td>').text(item.IdZona));
-                                    row.append($('<td>').text(nome));
-                                    nome = " ";
+                                    row.append($('<td>').html(nomeTrattamento));
+                                    nomeTrattamento = " ";
                                     row.attr("id", id + vect[i])
                                     id = 0;
                                     tbody.append(row);
@@ -963,7 +969,7 @@
                                             console.log(serverData);
                                         })
                                         getID.done(function (serverData) {
-                                            console.log(serverData)
+                                        
                                             let intest = Object.keys(serverData[0]);
                                             for (let item of intest) {
 
@@ -1281,7 +1287,16 @@
 
                                     }
                                     else {
-                                        row.append($('<td>').text(value));
+                                        
+                                        if (moment(value, moment.ISO_8601, true).isValid()) {
+                                            
+                                            row.append($('<td>').text(moment(value).format("DD/MM/YYYY")));
+                                        }
+                                        else {
+                                           
+                                            row.append($('<td>').text(value));
+                                        }
+                                        
                                     }
                                 });
 
@@ -1606,106 +1621,70 @@
                     }
                     
                 }
-                
-               
-                
-               
-                
                 table.append(tbody);
                 tbody.attr("id", "tbody" + vect[i])
-                tbody.hide()
-               
-                $('.table__body' + vect[i] + '').append(table);
+                table.hide()
+                $("#divTabelle").append(table);
                 table.attr("id", vect[i]);
-
-
-                $('thead tr').hide()
-                /*
-                const id = vect[i];
-                nodeListArray.push({ id: id, nodeList: table_rows });
-               
-                
-                nodeListArrayHeight.push({ id: id, nodeList: table_headings });
-                console.log(table_headings)
-                */
-                /*
-                $("#thead" + vect[i]).on("click", function () {
-                    var table_rows = document.querySelectorAll("#tbody" + $(this).attr("id").replace("thead", "") + " tr")
-                    var table_headings = document.querySelectorAll("#thead" + $(this).attr("id").replace("thead", "") + " th");
-                    console.log($(this).attr("id"))
-                    console.log(table_rows)
-                    table_headings.forEach((head, i) => {
-                        console.log(table_headings)
-                        let sort_asc = true;
-    
-                        head.onclick = () => {
-                            table_headings.forEach(head => head.classList.remove('active'));
-                            head.classList.add('active');
-                            document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
-                            table_rows.forEach(row => {
-                                row.querySelectorAll('td')[i].classList.add('active');
-                            })
-                            head.classList.toggle('asc', sort_asc);
-                            sort_asc = head.classList.contains('asc') ? false : true;
-                            sortTable(i, sort_asc);
-                            console.log($(this).attr("id"))
-                        }
-                    })
-                    function sortTable(column, sort_asc) {
-    
-                        [...table_rows].sort((a, b) => {
-                            let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
-                                second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
-    
-                            return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
-                        })
-                        console.log($(this).attr("id"))
-                            .map(sorted_row => document.querySelector("#tbody" + $(this).attr("id").replace("thead", "")).appendChild(sorted_row));
-                        
-                    }
+                $('[id="raccolta"]').show()
+                $("#raccoltaLine").show()
+                $("#pRaccolta").on("click", function () {
+                    $(".line").hide();
+                    table.hide();
+                    $('[id="raccolta"]').show()
+                    $("#raccoltaLine").show()
+                    $("#divGraficoRaccolta").show()
                 })
-    
-                */
-
-                $('h1').on("click", function () {
-                
-                   
-                    if (tipo != $(this).attr('id')) {
-                        
-                        tipo = $(this).attr('id');
-                        if ($("#tbody" + $(this).attr('id')).css("display") == "none") {
-
-                            //dynamicH1.html(vect[i])
-                            console.log($(this).attr('id'))
-                            $("#tbody" + $(this).attr('id')).show()
-                            //headerRow.show()
-                            $("#thead" + $(this).attr('id') + " tr").show()
-
-
-                        }
-                        else {
-                            console.log("ciuso")
-                            $("#thead" + $(this).attr('id') + " tr").hide()
-                            $("#tbody" + $(this).attr('id')).hide()
-                            dynamicH1.html(dynamicText);
-                        }
-                        
-                    }
-                     // $("#tbody" + dynamicH1.attr("id")).fadeToggle(500);
-                });
-            
+                $("#pTrattamenti").on("click", function () {
+                    $(".line").hide();
+                    table.hide();
+                    $('[id="trattamenti"]').show()
+                    $("#trattamentiLine").show()
+                    $("#divGraficoRaccolta").hide()
+                })
+                $("#pSfemminellatura").on("click", function () {
+                    $(".line").hide();
+                    table.hide();
+                    $('[id="sfemminellatura"]').show()
+                    $("#sfemminellaturaLine").show()
+                    $("#divGraficoRaccolta").hide()
+                })
+                $("#pConcimazione").on("click", function () {
+                    $(".line").hide();
+                    table.hide();
+                    $('[id="concimazione"]').show()
+                    $("#concimazioneLine").show()
+                    $("#divGraficoRaccolta").hide()
+                })
+                $("#pPiantato").on("click", function () {
+                    $(".line").hide();
+                    table.hide();
+                    $('[id="piantato"]').show()
+                    $("#piantatoLine").show()
+                    $("#divGraficoRaccolta").hide()
+                })
+                $("#pLancioInsetti").on("click", function () {
+                    $(".line").hide();
+                    table.hide();
+                    $('[id="lancioInsetti"]').show()
+                    $("#lancioInsettiLine").show()
+                    $("#divGraficoRaccolta").hide()
+                })
             })
-    
-          
-
         })
-
-        
     }
+})
    
     
 
-})
+   
+
+    
+        
+
+
+    
+   
 
 
 

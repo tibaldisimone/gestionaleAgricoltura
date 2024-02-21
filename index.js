@@ -291,6 +291,7 @@ function loadMapScenario() {
                             "margin-bottom": "5px",
 
                         });
+
                         if (item.toString() == "Data") {
                             var datePickerId = "datepicker" + ($("input[type='text'][id^='datepicker']").length + 1);
                             $("<input>").attr("type", "text").attr("id", item).attr("name", datePickerId).appendTo("body");
@@ -518,7 +519,7 @@ function loadMapScenario() {
                                 comboBox.append($('<option></option>').attr('value', item.IdFitofarmaco).text(item.Nome));
                             })
                             var div = $('<div>').append(label, comboBox);
-                            $('#caselle').append(div);
+                            $('#caselle').appiend(div);
                             })
                             }
 

@@ -111,7 +111,7 @@ namespace esercizioProva.Controllers
             _cmd.Connection = _cn;
             _cmd.CommandType = CommandType.Text;
             _cmd.Parameters.AddWithValue("@idZona", idZona);
-            _cmd.CommandText = "select * from trattamenti inner join fitofarmacoUtilizzato on trattamenti.idTrattamento=fitofarmacoUtilizzato.idTrattamento where idZona=@idZona";
+            _cmd.CommandText = "select * from trattamenti inner join fitofarmacoUtilizzato on trattamenti.idTrattamento=fitofarmacoUtilizzato.idTrattamento where idZona=@idZona order by trattamenti.idTrattamento asc";
             _dr = _cmd.ExecuteReader();
             _lstTrattamento = new List<trattamentiModel>();
             while (_dr.Read())

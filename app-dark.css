@@ -17,20 +17,23 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 
-#divTabelle {
+#divTabelle, #titolo-h1 {
     background-color: #fff; /* Colore di sfondo bianco del div */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Ombra nera */
-    padding-left: 70px; /* Spaziatura interna del div */
-    padding-right: 70px;
-    padding-bottom: 20px;
+    padding-left: 3vw; /* Spaziatura interna del div */
+    padding-right: 3vw;
+    padding-top: 10px;
+    padding-bottom: 10px;
     margin-top: 30px;
-    margin-left: 30px;
-    margin-right: 30px;
-    border-radius: 15px
+    margin-left: 3vw;
+    margin-right: 3vh;
+    border-radius: 15px;
+    color: black;
 }
-.cookiesContent {
-  
 
+
+
+.cookiesContent {
     width: 320px;
     display: flex;
     flex-direction: column;
@@ -229,7 +232,7 @@ body {
     font-family: "Overpass", sans-serif;
     font-size: 0.875rem;
     font-weight: 400;
-    color: #ced4da;
+   color:black;
     text-align: left;
     background-color: white;
 }
@@ -349,6 +352,7 @@ table {
   border-right:none;
   background-color:white;
   color:black;
+  width:100%;
 }
 
 tr{
@@ -492,7 +496,7 @@ h1, .h1 {
   font-size: 2.1875rem; }
   @media (max-width: 1200px) {
     h1, .h1 {
-      font-size: calc(1.34375rem + 1.125vw) ; } }
+      } }
 
 h2, .h2 {
   font-size: 1.75rem; }
@@ -1353,12 +1357,28 @@ pre {
     margin-left: 91.66667%; } }
 
 .table {
-  width: 100%;
-  margin-bottom: 1rem;
-  color: #ced4da; }
+    margin-top:30px;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #ced4da;
+
+    overflow-x: hidden;
+}
+@media (max-width: 600px) {
+    table {
+        
+        
+    }
+
+    th, td {
+      
+        width: 100%;
+        box-sizing: border-box; /* Evita che il padding influenzi la larghezza */
+    }
+}
   .table th,
   .table td {
-    padding: 0.75rem;
+ 
     vertical-align: top;
     border-top: 1px solid #212529; }
   .table thead th {
@@ -1369,7 +1389,7 @@ pre {
 
 .table-sm th,
 .table-sm td {
-  padding: 0.3rem; }
+ }
 
 .table-bordered {
   border: 1px solid #212529; }
@@ -8174,7 +8194,7 @@ select {
     width: 100%; }
   /* fix table responsive */
   .table {
-    display: block;
+    
     overflow-x: auto; }
   .fc-bootstrap table tbody {
     width: 100%; }
@@ -8293,9 +8313,13 @@ svg.navbar-brand-img {
 
 /* table */
 .table {
-  color: #ced4da; }
-  .table thead th {
-    color: #adb5bd; }
+  color: black; 
+  font:bold;
+}
+    .table thead th {
+        color: black;
+        background-color:lightblue;
+    }
   .table tbody tr th {
     color: #dee2e6; }
 

@@ -198,9 +198,6 @@ main.table {
         visibility: visible;
     }
 
-table {
-    width: 100%;
-}
 
 td img {
     width: 36px;
@@ -295,11 +292,7 @@ tbody tr {
     }
 
 
-@media (max-width: 1000px) {
-    td:not(:first-of-type) {
-        min-width: 12.1rem;
-    }
-}
+
 
 thead th span.icon-arrow {
     display: inline-block;
